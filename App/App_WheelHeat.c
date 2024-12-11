@@ -404,8 +404,8 @@ void App_WheelHeat_Task(void) {
     uint8_t u8cmd = 0;
     uint8_t SteerWhllHeatSW;
     SteerWhllHeatSW = (uint8_t)u8ReadRemoteHeatSwitchStatus();
-    self_check_state = (uint8_t)((self_check_state & (uint8_t)(~0x3)) | (uint8_t)eReadEngineState() & 0x3);
-    
+    self_check_state = (uint8_t)((uint8_t)eReadEngineState() & 0x3);
+
     /*检查发动机状态*/
     if ((self_check_state & 0x3) == 1) {
         if (((self_check_state & 0xC) >> 2) < 3) {
