@@ -1,0 +1,36 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"app_mfs.h": "c",
+			"types.h": "c",
+			"pdur_dcm.h": "c",
+			"stddef.h": "c",
+			"stdint.h": "c",
+			"yvals.h": "c",
+			"app_bootcfg.h": "c",
+			"core_cm0plus.h": "c",
+			"app_boot.h": "c",
+			"pll.h": "c",
+			"mf_config.h": "c",
+			"tim.h": "c",
+			"fm33lg0xx_fl.h": "c",
+			"fm33_assert.h": "c",
+			"fm33xx.h": "c",
+			"oseknm.h": "c",
+			"fm33lg0xx_fl_conf.h": "c",
+			"fm33lg0xx_fl_adc.h": "c",
+			"fm33lg0xx_fl_def.h": "c",
+			"fm33lg0xx.h": "c",
+			"adc_drv.h": "c",
+			"stdio.h": "c",
+			"dma.h": "c",
+			"system_voltage_manage.h": "c",
+			"keyboard_config.h": "c"
+		}
+	}
+}
