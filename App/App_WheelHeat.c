@@ -229,12 +229,10 @@ uint8_t u8CheckCondition(void) {
             u8result = CMDHEAT_DISABLE_CURRENT;
             App_stWheelHeat.u8HeatSwitchStauts = 0; // 立即关闭加热
         }
-    } 
-    else 
-    {
-
+    } else {
+    
     }
-
+    
     return u8result;
 }
 /*
@@ -393,80 +391,68 @@ uint8_t u8CheckHeatCmd(void) {
 /* bit0~1定义为发动机当前状态，bit2~3定义为发动机状态出现RUNNING的次数，当连续三次出现RUNNING的情认为发动机状态是有效的，
 bit4~5定义为上电加热自检启动 */
 uint8_t self_check_state;
+/*加热自检280ms*/
 uint8_t self_check_cnt;
 /*bit0定义为NTC是否开路，bit1定义为NTC是否短路，bit2定义为IS是否短路，bit3定义为IS是否开路
-bit4定义为电源模式是否正常，bit5定义为发动机状态是否正常
-*/
+bit4定义为电源模式是否正常，bit5定义为发动机状态是否正常*/
 uint8_t heat_diag_state;
 uint8_t SWHMFailure;
 uint8_t SWHMFailure_tx_cnt;
 uint8_t SWHMFailure_time_cnt;
+uint8_t StatusOfTheSteeringWheelHeater;
 void App_WheelHeat_Task(void) {
     uint8_t u8cmd = 0;
     uint8_t SteerWhllHeatSW;
     SteerWhllHeatSW = (uint8_t)u8ReadRemoteHeatSwitchStatus();
     self_check_state = (uint8_t)((uint8_t)eReadEngineState() & 0x3);
-
+    
     /*检查发动机状态*/
-    if ((self_check_state & 0x3) == 1)
-    {
-        if (((self_check_state & 0xC) >> 2) < 3)
-        {
+    if ((self_check_state & 0x3) == 1) {
+        if (((self_check_state & 0xC) >> 2) < 3) {
             self_check_state += 0x4;
         }
-    }
-    else
-    {
-        if (((self_check_state & 0xC) >> 2) > 0)
-        {
+    } else {
+        if (((self_check_state & 0xC) >> 2) > 0) {
             self_check_state -= 0x4;
         }
     }
-    if (((self_check_state & 0xC) >> 2) == 3)
-    { // 发动机状态有效
-        if (self_check_cnt == 0)
-        {
+    if (((self_check_state & 0xC) >> 2) == 3) {
+        // 发动机状态有效
+        if (self_check_cnt == 0) {
             vHeatOutputOn(); // 开启IN脚
-            if ((App_stWheelHeat.u16ShortValue < VALUE_THRESD_OVER_LOAD) && (App_stWheelHeat.u16ShortValue > ADC_WHL_HEAT_OPEN_THRESD))
-            { // IS脚正常
+            if ((App_stWheelHeat.u16ShortValue < VALUE_THRESD_OVER_LOAD) && (App_stWheelHeat.u16ShortValue > ADC_WHL_HEAT_OPEN_THRESD)) {
+                // IS脚正常
                 self_check_state |= 0x10;
             }
         }
     }
-    if (((self_check_state & 0x30) >> 4) == 1)
-    { // 加热自检开始
-        do
-        {
-            if (self_check_cnt > 28)
-            { // 自检结束
+    if (((self_check_state & 0x30) >> 4) == 1) {
+        // 加热自检开始
+        do {
+            if (self_check_cnt > 28) {
+                // 自检结束
                 vHeatOutputOff();
                 heat_diag_state = 0;
                 break;
             }
-
-            if (system_voltage_mode_get() != SYSTEM_VOLTAGE_MODE_NORMAL)
-            {
+            
+            if (system_voltage_mode_get() != SYSTEM_VOLTAGE_MODE_NORMAL) {
                 heat_diag_state = (heat_diag_state & (uint8_t)(~0x10)) | 0x10;
-            }
-            else
-            {
+            } else {
                 heat_diag_state &= (uint8_t)(~0x10);
             }
-
-            if (((self_check_state & 0xC) >> 2) == 0)
-            { // 检查发动机状态连续3次都不是RUNNING
+            
+            if (((self_check_state & 0xC) >> 2) == 0) {
+                // 检查发动机状态连续3次都不是RUNNING
                 self_check_cnt = 0;
                 heat_diag_state = (heat_diag_state & (uint8_t)(~0x20)) | 0x20;
-            }
-            else
-            {
+            } else {
                 heat_diag_state &= (uint8_t)(~0x20);
             }
-
+            
             heat_diag_state = (heat_diag_state & (uint8_t)(~0xF)) | ((uint8_t)vHeatDiag() & 0xF);
-
-            if (heat_diag_state != 0)
-            {
+            
+            if (heat_diag_state != 0) {
                 vHeatOutputOff();
                 SWHMFailure = 1;
                 break;
@@ -474,7 +460,7 @@ void App_WheelHeat_Task(void) {
             self_check_cnt++;
         } while (0);
     }
-
+    
     do {
         if (SWHMFailure == 1) {
             break;
@@ -490,8 +476,10 @@ void App_WheelHeat_Task(void) {
         if (App_stWheelHeat.u32HeatTimer) {
             App_stWheelHeat.u32HeatTimer--;
             vHeatOutputOn();
+            StatusOfTheSteeringWheelHeater = 0x3;
         } else {
             vHeatOutputOff();
+            StatusOfTheSteeringWheelHeater = 0x1;
             break;
         }
         if (system_voltage_mode_get() != SYSTEM_VOLTAGE_MODE_NORMAL) {
@@ -512,7 +500,7 @@ void App_WheelHeat_Task(void) {
             break;
         }
     } while (0);
-    
+    COM_SendSig1(&StatusOfTheSteeringWheelHeater);
     do {
         if (SWHMFailure == 0) {
             SWHMFailure_time_cnt = 10;
@@ -529,104 +517,6 @@ void App_WheelHeat_Task(void) {
             SWHMFailure_tx_cnt++;
         }
     } while (0);
-    
-    
-    vOverHeatDiag();
-    u8cmd = u8CheckHeatCmd();
-    
-    switch (App_stWheelHeat.Machine) {
-        case WHEEL_HEAT_STATE_OFF:
-            do {
-            
-            
-            
-            
-            
-            
-                u8HeatFeedBack = CANRXHEATCMD_DISABLE;
-                if (CMDHEAT_ENABLE == u8cmd) { /////if enable
-                    u8HeatFeedBack = CANRXHEATCMD_ENABLE;
-                    App_stWheelHeat.Machine = WHEEL_HEAT_STATE_ON;
-                    
-                    #ifdef PID
-                    PID_ResetIntegral(&pid);
-                    #endif
-                    
-                    App_stWheelHeat.u8heatcntr = 0;
-                    App_stWheelHeat.u16pidcntr = WHEEL_HEAT_PID_TIMER3S;
-                } else { /////if  not ENABLE
-                    vHeatOutputOff();
-                    App_stWheelHeat.u8OnFlag = 0;
-                }
-            } while (0);
-            break;
-            
-        case WHEEL_HEAT_STATE_ON:
-            u8HeatFeedBack = CANRXHEATCMD_ENABLE;
-            
-            if (CMDHEAT_ENABLE == u8cmd) { /////if enable
-                if (App_stWheelHeat.u16NtcValue + u16delat < (ADC_WHL_HAET_ALL_ON_ADC - 50)) { //
-                    App_stWheelHeat.flag = 1;
-                } else {
-                    App_stWheelHeat.flag = 0;
-                }
-                if (App_stWheelHeat.u16NtcValue + u16delat > ADC_WHL_HAET_ALL_ON_ADC)
-                    // if((App_stWheelHeat.u16NtcValue+u16delat>ADC_WHL_HAET_ALL_ON_ADC)&&(App_stWheelHeat.u16ISValue<VALUE_THRESD_OVER_LOAD))
-                {
-                    #ifdef PID
-                    vHeatControl();
-                    #endif
-                    #ifdef UNPID
-                    if ((App_stWheelHeat.flag == 1) && (App_stWheelHeat.u32HeatTimer > 0)) {
-                        vHeatOutputOn();
-                        App_stWheelHeat.u8OnFlag = 1;
-                        App_stWheelHeat.u32HeatTimer--;
-                        App_stWheelHeat.u32unHeatTimer = WHEEL_HEAT_TIMER_6S;
-                    } else {
-                        if (App_stWheelHeat.flag == 1) {
-                            vHeatOutputOff();
-                            App_stWheelHeat.u32unHeatTimer--;
-                            if (App_stWheelHeat.u32unHeatTimer == 0) {
-                                App_stWheelHeat.u32HeatTimer = WHEEL_HEAT_TIMER_6S;
-                            }
-                        } else {
-                            vHeatOutputOn();
-                            App_stWheelHeat.u8OnFlag = 1; 
-                        }
-                    }
-                    
-                    #endif
-                } else {
-                    if (0 == App_stWheelHeat.u16HeatShortCnt) {
-                        vHeatOutputOff();
-                        App_stWheelHeat.u32HeatTimer = WHEEL_HEAT_TIMER_6S;
-                        App_stWheelHeat.u8OnFlag = 0;
-                    }
-                }
-            } else {
-                u8HeatFeedBack = CMDHEAT_DISABLE_CMD;
-                App_stWheelHeat.Machine = WHEEL_HEAT_STATE_OFF;
-            }
-            
-            break;
-            
-        case WHEEL_HEAT_STATE_OVERLOAD:
-            vHeatOutputOff();
-            App_stWheelHeat.u8HeatSwitchStauts = 0;         // 立即关闭加热
-            u8HeatStatusSignal = 1;                         // 设置状态为1
-            App_stWheelHeat.Machine = WHEEL_HEAT_STATE_OFF; // 回到关闭状态
-            break;
-                    
-        default:
-            vHeatOutputOff(); // vHeatPwmDuty(0);//MODIFY
-            App_stWheelHeat.Machine = WHEEL_HEAT_STATE_OFF;
-            // App_stWheelHeat.u32HeatTimer=WHEEL_HEAT_TIMER_30MIN;
-            break;
-    }
-    
-    if (CMDHEAT_ENABLE != u8HeatFeedBack) {
-        u8HeatFeedBack = CMDHEAT_DISABLE_CMD; ///////closed
-    }
 }
 
 /**

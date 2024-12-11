@@ -365,7 +365,7 @@ extern void AppRxIpdu_Message2_TimeOutInd(void);
 *   data declaration
 *******************************************************************************/
 
-void  COM_SendSigSWS_HeatStatus(COM_CONST void* SigValue);
+void  COM_SendSig2(COM_CONST void* SigValue);
 #if(COM_TXIPDUNUM>=1)
 extern PduInfoType COM_TxDataPtr[COM_TXIPDUNUM];
 extern COM_CONST PduInfoType COM_TxDataInitInfo[COM_TXIPDUNUM]; 
