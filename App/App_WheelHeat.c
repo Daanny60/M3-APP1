@@ -53,7 +53,8 @@ static const uint16_t RimTempLookUp[RIM_LOOKUP_SIZE] = {
     0x1159, 0x10F2, 0x108B, 0x102A, 0xFCE,  0xF6B,  0xF0F,  0xEB7,  0xE60,  0xE14,  /* 120 */
 };
 
-static int16_t convertRimTemp(uint16_t rawTemp) {
+static int16_t convertRimTemp(uint16_t rawTemp)
+{
 #define NO_EXIT_VALUE 1000  /* a random value greater than the array size */
 #define BASE_TEMP     (-40) /* index 0 equals -40 deg. C */
 
@@ -63,77 +64,96 @@ static int16_t convertRimTemp(uint16_t rawTemp) {
     uint8_t midIndex;
     uint8_t parts = 0u;
     int16_t retVal = NO_EXIT_VALUE;
-    
+
     /* The two indexes close in on the desired value. If they meet and no value has been
      *  selected, you are searching at the very beginning or very end */
     /* The process looks to find a segment btw two table values that contains the rawTemp
      *  value or a table value equal to the rawTemp value.  If the segment is found, the
      *  fractional part of the index/realTemp is found by interpolation   */
-    
-    while ((stIndex < (endIndex - 1U)) && (retVal == NO_EXIT_VALUE)) {
+
+    while ((stIndex < (endIndex - 1U)) && (retVal == NO_EXIT_VALUE))
+    {
         midIndex = (stIndex + endIndex) / 2U; /* select the next test target */
-        if (fpRawTemp > RimTempLookUp[midIndex]) {
+        if (fpRawTemp > RimTempLookUp[midIndex])
+        {
             /* looking too far into the table? */
             /* BIGRAW.....s...........R.......m..............<-e.........SMALLRAW  */
             endIndex = midIndex; /* adjust the focus to earlier part of table */
-        } else if (fpRawTemp < RimTempLookUp[midIndex]) {
+        }
+        else if (fpRawTemp < RimTempLookUp[midIndex])
+        {
             /* far enough in? */
             /* BIGRAW.....s...........m.......R................e.........SMALLRAW  */
             /* does raw value fall between */
-            if (fpRawTemp < RimTempLookUp[midIndex + 1U]) {
+            if (fpRawTemp < RimTempLookUp[midIndex + 1U])
+            {
                 /* next is still not far enough */
                 /* BIGRAW.....s->.........m....m1..R................e.........SMALLRAW  */
                 stIndex = midIndex; /* adjust the focus to later part of table */
-            } else {
+            }
+            else
+            {
                 /* we have found the segment for interpolation  */
                 /* BIGRAW.....s...........m....R.m1................e.........SMALLRAW  */
                 parts = (uint8_t)(((RimTempLookUp[midIndex] - fpRawTemp) << 4u) /
-                        (RimTempLookUp[midIndex] - RimTempLookUp[midIndex + 1u]));
+                                  (RimTempLookUp[midIndex] - RimTempLookUp[midIndex + 1u]));
                 retVal = (int16_t)midIndex;
             }
-        } else {
+        }
+        else
+        {
             /* not too hot and not too cold.  Must be equal  */
             /* BIGRAW.....s...........m=R................e.........SMALLRAW  */
             retVal = (int16_t)midIndex; /* perfect match */
         }
     }
     /* this part resolves selections that exceed the table boundaries */
-    if (retVal == NO_EXIT_VALUE) {
+    if (retVal == NO_EXIT_VALUE)
+    {
         /* raw value is not on the table */
-        if (endIndex <= 1U) {
+        if (endIndex <= 1U)
+        {
             retVal = 0; /* just the first table value */
-        } else if (stIndex >= (RIM_LOOKUP_SIZE - 3U)) {
+        }
+        else if (stIndex >= (RIM_LOOKUP_SIZE - 3U))
+        {
             retVal = (int16_t)RIM_LOOKUP_SIZE; /* just beyond the last table value */
-        } else {
+        }
+        else
+        {
             /* Do Nothing */
         }
     }
     return (int16_t)(((retVal + BASE_TEMP) << 4u) + parts); /* PRQA S 1860, 4533  */
 }
 
-uint16_t u16readntcvalue(void) {
-    return App_stWheelHeat.u16NtcValue;
-}
+uint16_t u16readntcvalue(void) { return App_stWheelHeat.u16NtcValue; }
 
-void vHeatControl(void) {
+void vHeatControl(void)
+{
     int16_t s16temp;
     App_stWheelHeat.u16pidcntr++;
-    if (App_stWheelHeat.u16pidcntr >= WHEEL_HEAT_PID_TIMER3S) {
+    if (App_stWheelHeat.u16pidcntr >= WHEEL_HEAT_PID_TIMER3S)
+    {
         App_stWheelHeat.u16pidcntr = 0;
         s16temp = convertRimTemp(u16readntcvalue());
         u8PidResult = (uint8_t)PID_Compute(&pid, (float)s16PidSetPoint, (float)s16temp);
     }
-    
-    if (App_stWheelHeat.u8heatcntr < u8PidResult) {
+
+    if (App_stWheelHeat.u8heatcntr < u8PidResult)
+    {
         vHeatOutputOn();
         App_stWheelHeat.u8OnFlag = 1;
-    } else {
+    }
+    else
+    {
         vHeatOutputOff();
         App_stWheelHeat.u8OnFlag = 0;
     }
-    
+
     App_stWheelHeat.u8heatcntr++;
-    if (App_stWheelHeat.u8heatcntr >= 100) {
+    if (App_stWheelHeat.u8heatcntr >= 100)
+    {
         App_stWheelHeat.u8heatcntr = 0;
     }
 }
@@ -145,7 +165,8 @@ uint8_t u8flagheat = FLAG_CMD_STOP;
 uint16_t u16delat = 0;
 suion_flag_type u8flag_heat;
 
-void App_wheelHeatInit(void) {
+void App_wheelHeatInit(void)
+{
     uint8_t i;
     memset(&App_stWheelHeat, 0, sizeof(App_stWheelHeat));
     u8OldHeatCmd = CANRXHEATCMD_INVALID;
@@ -155,17 +176,15 @@ void App_wheelHeatInit(void) {
     u16delat = 0;
     u8flag_heat.flag = 0;
     u8HeatStatusSignal = 0;
-    for (i = 0; i < 16; i++) {
+    for (i = 0; i < 16; i++)
+    {
         App_stWheelHeat.u16OnBuf[i] = 4095; /////max value
     }
     // 初始化PID
     PID_Init(&pid, 1.0, 0.02f, 10, 90, 0, 600, -600, 96, -96);
-    
 }
 
-void vResetHeatTime(void) {
-    App_stWheelHeat.u32HeatTimer = 0;
-}
+void vResetHeatTime(void) { App_stWheelHeat.u32HeatTimer = 0; }
 
 /*
 1、BCM CMD
@@ -178,38 +197,42 @@ void vResetHeatTime(void) {
 
 检测以上的状态决定是否开启加热功�?
 */
-uint8_t u8CheckCondition(void) {
+uint8_t u8CheckCondition(void)
+{
     uint32_t u32ntcsum = 0;
     uint32_t u32issum = 0;
     uint32_t u32Onsum = 0;
     uint8_t i;
     uint16_t u16IsVauleNow = 0;
-    
+
     App_stWheelHeat.u8Index++;
     App_stWheelHeat.u8Index %= 16;
-    #ifdef PID
-    if (App_stWheelHeat.u8OnFlag == 0) {
+#ifdef PID
+    if (App_stWheelHeat.u8OnFlag == 0)
+    {
         App_stWheelHeat.u8Ntcindex++;
         App_stWheelHeat.u8Ntcindex %= 16;
         App_stWheelHeat.u16NtcBuf[App_stWheelHeat.u8Ntcindex] = ADC_Result_Get(ADC_WHL_HEAT_NTC_INDEX);
     }
-    
-    #endif
-    
-    #ifdef UNPID
+
+#endif
+
+#ifdef UNPID
     App_stWheelHeat.u16NtcBuf[App_stWheelHeat.u8Index] = ADC_Result_Get(ADC_WHL_HEAT_NTC_INDEX);
-    #endif
-    
+#endif
+
     u16IsVauleNow = ADC_ResulFiltertMv_Get(ADC_WHL_HEAT_IS_INDEX);
     App_stWheelHeat.u16ISBuf[App_stWheelHeat.u8Index] = u16IsVauleNow;
-    if (App_stWheelHeat.u8OnFlag != 0) {
+    if (App_stWheelHeat.u8OnFlag != 0)
+    {
         App_stWheelHeat.u8OnIndex++;
         App_stWheelHeat.u8OnIndex %= 16;
         App_stWheelHeat.u16OnBuf[App_stWheelHeat.u8OnIndex] = u16IsVauleNow;
     }
-    
+
     App_stWheelHeat.u8OnFlag = 0;
-    for (i = 0; i < 16; i++) {
+    for (i = 0; i < 16; i++)
+    {
         u32ntcsum += App_stWheelHeat.u16NtcBuf[i];
         u32issum += App_stWheelHeat.u16ISBuf[i];
         u32Onsum += App_stWheelHeat.u16OnBuf[i];
@@ -222,77 +245,105 @@ uint8_t u8CheckCondition(void) {
 /*
 ntc 开路 短路诊断记录
 */
-uint8_t vHeatDiag(void) {
+uint8_t vHeatDiag(void)
+{
     uint8_t heat_diag_state = 0;
     /*NTC开路*/
-    if (App_stWheelHeat.u16NtcValue > ADC_WHL_HEAT_NTC_OPEN_THRESD) {
+    if (App_stWheelHeat.u16NtcValue > ADC_WHL_HEAT_NTC_OPEN_THRESD)
+    {
         App_stWheelHeat.u16NtcOpenCnt++;
-        if (App_stWheelHeat.u16NtcOpenCnt > 3) {
+        if (App_stWheelHeat.u16NtcOpenCnt > 3)
+        {
             heat_diag_state |= 1;
         }
-        if (App_stWheelHeat.u16NtcOpenCnt > WHEEL_HEAT_TIMER_2S) {
+        if (App_stWheelHeat.u16NtcOpenCnt > WHEEL_HEAT_TIMER_2S)
+        {
             AppDemmNtcShortOrOpenFailureEvent(DTC_TEST_EVENT_FAILED);
             App_stWheelHeat.u16NtcOpenCnt = WHEEL_HEAT_TIMER_2S;
         }
-    } else {
-        if (App_stWheelHeat.u16NtcOpenCnt > 0) {
+    }
+    else
+    {
+        if (App_stWheelHeat.u16NtcOpenCnt > 0)
+        {
             App_stWheelHeat.u16NtcOpenCnt--;
         }
     }
     /*NTC短路*/
-    if (App_stWheelHeat.u16NtcValue < ADC_WHL_HEAT_NTC_SHORT_THRESD) {
+    if (App_stWheelHeat.u16NtcValue < ADC_WHL_HEAT_NTC_SHORT_THRESD)
+    {
         App_stWheelHeat.u16NtcShortCnt++;
-        if (App_stWheelHeat.u16NtcShortCnt > 3) {
+        if (App_stWheelHeat.u16NtcShortCnt > 3)
+        {
             heat_diag_state |= 2;
         }
-        if (App_stWheelHeat.u16NtcShortCnt > WHEEL_HEAT_TIMER_2S) {
+        if (App_stWheelHeat.u16NtcShortCnt > WHEEL_HEAT_TIMER_2S)
+        {
             AppDemmNtcShortOrOpenFailureEvent(DTC_TEST_EVENT_FAILED);
             App_stWheelHeat.u16NtcShortCnt = WHEEL_HEAT_TIMER_2S;
         }
-    } else {
-        if (App_stWheelHeat.u16NtcShortCnt > 0) {
+    }
+    else
+    {
+        if (App_stWheelHeat.u16NtcShortCnt > 0)
+        {
             App_stWheelHeat.u16NtcShortCnt--;
         }
     }
     /*NTC正常*/
-    if ((App_stWheelHeat.u16NtcOpenCnt == 0) && (App_stWheelHeat.u16NtcShortCnt == 0)) {
+    if ((App_stWheelHeat.u16NtcOpenCnt == 0) && (App_stWheelHeat.u16NtcShortCnt == 0))
+    {
         heat_diag_state &= 0xFC;
         AppDemmNtcShortOrOpenFailureEvent(DTC_TEST_EVENT_PASSED);
     }
     /*IS短路*/
-    if (App_stWheelHeat.u16ShortValue > ADC_WHL_HEAT_SHORT_THRESD) {
+    if (App_stWheelHeat.u16ShortValue > ADC_WHL_HEAT_SHORT_THRESD)
+    {
         App_stWheelHeat.u16HeatShortCnt++;
-        if (App_stWheelHeat.u16HeatShortCnt > 3) {
+        if (App_stWheelHeat.u16HeatShortCnt > 3)
+        {
             heat_diag_state |= 4;
         }
-        if (App_stWheelHeat.u16HeatShortCnt > WHEEL_HEAT_TIMER_2S) {
+        if (App_stWheelHeat.u16HeatShortCnt > WHEEL_HEAT_TIMER_2S)
+        {
             AppDemmHeatShortFailureEvent(DTC_TEST_EVENT_FAILED);
             App_stWheelHeat.u16HeatShortCnt = WHEEL_HEAT_TIMER_2S;
         }
-    } else {
-        if (App_stWheelHeat.u16HeatShortCnt > 0) {
+    }
+    else
+    {
+        if (App_stWheelHeat.u16HeatShortCnt > 0)
+        {
             App_stWheelHeat.u16HeatShortCnt--;
         }
-        if (App_stWheelHeat.u16HeatShortCnt == 0) {
+        if (App_stWheelHeat.u16HeatShortCnt == 0)
+        {
             heat_diag_state &= 0xFB;
             AppDemmHeatShortFailureEvent(DTC_TEST_EVENT_PASSED);
         }
     }
     /*IS开路*/
-    if (App_stWheelHeat.u16ShortValue < ADC_WHL_HEAT_OPEN_THRESD) {
+    if (App_stWheelHeat.u16ShortValue < ADC_WHL_HEAT_OPEN_THRESD)
+    {
         App_stWheelHeat.u16HeatOpenCnt++;
-        if (App_stWheelHeat.u16HeatOpenCnt > 3) {
+        if (App_stWheelHeat.u16HeatOpenCnt > 3)
+        {
             heat_diag_state |= 8;
         }
-        if (App_stWheelHeat.u16HeatOpenCnt > WHEEL_HEAT_TIMER_2S) {
+        if (App_stWheelHeat.u16HeatOpenCnt > WHEEL_HEAT_TIMER_2S)
+        {
             AppDemmHeatOpenFailureEvent(DTC_TEST_EVENT_FAILED);
             App_stWheelHeat.u16HeatOpenCnt = WHEEL_HEAT_TIMER_2S;
         }
-    } else {
-        if (App_stWheelHeat.u16HeatOpenCnt > 0) {
+    }
+    else
+    {
+        if (App_stWheelHeat.u16HeatOpenCnt > 0)
+        {
             App_stWheelHeat.u16HeatOpenCnt--;
         }
-        if (App_stWheelHeat.u16HeatOpenCnt == 0) {
+        if (App_stWheelHeat.u16HeatOpenCnt == 0)
+        {
             heat_diag_state &= 0xF7;
             AppDemmHeatOpenFailureEvent(DTC_TEST_EVENT_PASSED);
         }
@@ -300,44 +351,58 @@ uint8_t vHeatDiag(void) {
     return heat_diag_state;
 }
 
-uint8_t u8GetNTCFaultFlag(void) {
+uint8_t u8GetNTCFaultFlag(void)
+{
     uint8_t u8result = 0;
-    if (u8flag_heat.heatflag.flag_ntc_open || u8flag_heat.heatflag.flag_ntc_short) {
+    if (u8flag_heat.heatflag.flag_ntc_open || u8flag_heat.heatflag.flag_ntc_short)
+    {
         u8result = 1;
     }
     return u8result;
 }
 
-static void vOverHeatDiag(void) {
+static void vOverHeatDiag(void)
+{
     uint8_t u8DtcCondition = 0;
     int16_t s16temp;
-    do {
-        if (App_stWheelHeat.u16NtcValue < ADC_WHL_HEAT_NTC_SHORT_THRESD) {
+    do
+    {
+        if (App_stWheelHeat.u16NtcValue < ADC_WHL_HEAT_NTC_SHORT_THRESD)
+        {
             break;
         }
         App_stWheelHeat.u8overheatperiodcntr++;
-        if (App_stWheelHeat.u8overheatperiodcntr >= WHEEL_OVERHEAT_PERIOD_1S) {
+        if (App_stWheelHeat.u8overheatperiodcntr >= WHEEL_OVERHEAT_PERIOD_1S)
+        {
             // 1s进入一次
             u8DtcCondition = u8GetMonitorDtcCondition();
             App_stWheelHeat.u8overheatperiodcntr = 0;
-            if (0 == u8GetNTCFaultFlag() && 1 == u8DtcCondition) {
+            if (0 == u8GetNTCFaultFlag() && 1 == u8DtcCondition)
+            {
                 s16temp = convertRimTemp(u16readntcvalue());
-                if (s16temp > WHEEL_OVERHEAT_TEMP_37_5) {
+                if (s16temp > WHEEL_OVERHEAT_TEMP_37_5)
+                {
                     App_stWheelHeat.u16overheatfaultcntr++;
                     App_stWheelHeat.u16overheatrecovercntr = 0;
-                    if (App_stWheelHeat.u16overheatfaultcntr > WHEEL_OVERHEAT_FAULT_15S) {
+                    if (App_stWheelHeat.u16overheatfaultcntr > WHEEL_OVERHEAT_FAULT_15S)
+                    {
                         AppDemmTemOver37_5FailureEvent(DTC_TEST_EVENT_FAILED);
                         App_stWheelHeat.u16overheatfaultcntr = WHEEL_OVERHEAT_FAULT_15S;
                     }
-                } else {
+                }
+                else
+                {
                     App_stWheelHeat.u16overheatfaultcntr = 0;
                     App_stWheelHeat.u16overheatrecovercntr++;
-                    if (App_stWheelHeat.u16overheatrecovercntr > WHEEL_OVERHEAT_RECOVER_10S) {
+                    if (App_stWheelHeat.u16overheatrecovercntr > WHEEL_OVERHEAT_RECOVER_10S)
+                    {
                         AppDemmTemOver37_5FailureEvent(DTC_TEST_EVENT_PASSED);
                         App_stWheelHeat.u16overheatrecovercntr = WHEEL_OVERHEAT_RECOVER_10S;
                     }
                 }
-            } else {
+            }
+            else
+            {
                 App_stWheelHeat.u16overheatfaultcntr = 0;
                 App_stWheelHeat.u16overheatrecovercntr = 0;
             }
@@ -346,21 +411,27 @@ static void vOverHeatDiag(void) {
 }
 
 /* check if heat fun ok*/
-uint8_t u8CheckHeatCmd(void) {
+uint8_t u8CheckHeatCmd(void)
+{
     uint8_t u8result = CMDHEAT_DISABLE_CMD;
     volatile uint8_t u8heatcmd;
-    
+
     u8heatcmd = App_stWheelHeat.u8HeatSwitchStauts + 1;
-    
+
     volatile uint8_t u8heatcondition = u8CheckCondition();
-    
-    if (u8flag_heat.heatflag.flag_heat_short || u8flag_heat.heatflag.flag_heat_open) {
+
+    if (u8flag_heat.heatflag.flag_heat_short || u8flag_heat.heatflag.flag_heat_open)
+    {
         App_stWheelHeat.u8HeatEnable = CMDHEAT_DISABLE_CMD;
-    } else {
+    }
+    else
+    {
         App_stWheelHeat.u8HeatEnable = u8heatcondition;
     }
-    if (CANRXHEATCMD_ENABLE == u8heatcmd) {
-        if (CMDHEAT_ENABLE == u8heatcondition) {
+    if (CANRXHEATCMD_ENABLE == u8heatcmd)
+    {
+        if (CMDHEAT_ENABLE == u8heatcondition)
+        {
             u8result = CMDHEAT_ENABLE;
         }
         vHeatDiag();
@@ -393,7 +464,8 @@ uint8_t StatusOfTheSteeringWheelHeater;
 //     SWHMFailure_tx_cnt = 0;
 // }
 
-void App_WheelHeat_Task(void) {
+void App_WheelHeat_Task(void)
+{
     uint8_t u8cmd = 0;
     //获取加热按键信号 =0关 =1开
     uint8_t SteerWhllHeatSW;
@@ -401,69 +473,85 @@ void App_WheelHeat_Task(void) {
     SteerWhllHeatSW = (uint8_t)u8ReadRemoteHeatSwitchStatus();
     //保留bit2-7状态，并将获取到的现状态保存到 bit0-1
     self_check_state = (uint8_t)((self_check_state & (uint8_t)(~0x3)) | (uint8_t)eReadEngineState() & 0x3);
-    u8CheckCondition();//执行检测加热NTC及IS脚
-    
+    u8CheckCondition(); //执行检测加热NTC及IS脚
+
     /*---------------------------自检前判断发动机状态-------------------------------*/
     /*检查发动机状态*/
-    if ((self_check_state & 0x3) == 1) {
+    if ((self_check_state & 0x3) == 1)
+    {
         //执行读取3次发动机状态为1，直至self_check_state = 0xC
-        if (((self_check_state & 0xC) >> 2) < 3) {
+        if (((self_check_state & 0xC) >> 2) < 3)
+        {
             self_check_state += 0x4;
         }
-    } else {
-        if (((self_check_state & 0xC) >> 2) > 0) {
+    }
+    else
+    {
+        if (((self_check_state & 0xC) >> 2) > 0)
+        {
             self_check_state -= 0x4;
         }
-        else{
+        else
+        {
             //如果发动机状态为0，则清除280ms自检计数，清楚加热自检标志
             self_check_state &= (uint8_t)(~0xC);
             self_check_cnt = 0;
             self_check_state &= (uint8_t)(~0x10);
         }
     }
-    if (((self_check_state & 0xC) >> 2) == 3) {
+    if (((self_check_state & 0xC) >> 2) == 3)
+    {
         // 如果发动机状态读取到3次1
-        if (self_check_cnt == 0) {
-            vHeatOutputOn(); // 开启IN脚      
+        if (self_check_cnt == 0)
+        {
+            vHeatOutputOn(); // 开启IN脚
             //加热自检标志置1
             self_check_state |= 0x10;
         }
     }
 
     /*---------------------------加热自检280ms(只执行1次)-------------------------------*/
-    do {
+    do
+    {
         StatusOfTheSteeringWheelHeater = 0x3;
-        if (((self_check_state & 0xC) >> 2) == 0) {
+        if (((self_check_state & 0xC) >> 2) == 0)
+        {
             //检测发动机状态位是否为连续的3次1，如果不是则不进行下面的判断
             vHeatOutputOff();
             StatusOfTheSteeringWheelHeater = 0x1;
             (void)ClearRemoteHeatSwitchStatus();
             break;
         }
-        if (((self_check_state & 0x30) >> 4) != 1) {
+        if (((self_check_state & 0x30) >> 4) != 1)
+        {
             //检测加热自检标志是否为1
             break;
         }
-        if (self_check_cnt > 28) {
+        if (self_check_cnt > 28)
+        {
             // 自检结束
             vHeatOutputOff();
             StatusOfTheSteeringWheelHeater = 0x1;
             heat_diag_state = 0;
             break;
         }
-        
-        if (system_voltage_mode_get() != SYSTEM_VOLTAGE_MODE_NORMAL) {
+
+        if (system_voltage_mode_get() != SYSTEM_VOLTAGE_MODE_NORMAL)
+        {
             //电压不正常保留其余位，清bit4的状态，并将bit4置1
             heat_diag_state = (heat_diag_state & (uint8_t)(~0x10)) | 0x10;
-        } else {
+        }
+        else
+        {
             //电压正常，bit4状态清0
             heat_diag_state &= (uint8_t)(~0x10);
         }
-        
+
         //检测bit0~3（加热NTC及IS脚是否正常），不正常相应的bit置1
         heat_diag_state = (heat_diag_state & (uint8_t)(~0xF)) | ((uint8_t)vHeatDiag() & 0xF);
-        
-        if (heat_diag_state != 0) {
+
+        if (heat_diag_state != 0)
+        {
             vHeatOutputOff();
             StatusOfTheSteeringWheelHeater = 0x1;
             SWHMFailure = 1;
@@ -472,101 +560,108 @@ void App_WheelHeat_Task(void) {
         }
         self_check_cnt++;
     } while (0);
-    
+
     /*---------------------------故障检测-------------------------------*/
-    do {
-        if (((self_check_state & 0xC) >> 2) == 0) {
+    do
+    {
+        if (((self_check_state & 0xC) >> 2) == 0)
+        {
             //检测发动机状态位是否为连续的3次1，如果不是则不进行下面的判断
             vHeatOutputOff();
             StatusOfTheSteeringWheelHeater = 0x1;
             (void)ClearRemoteHeatSwitchStatus();
             break;
         }
-        if (SWHMFailure == 1) {
+        if (SWHMFailure == 1)
+        {
             vHeatOutputOff();
             StatusOfTheSteeringWheelHeater = 0x1;
             //(void)ClearRemoteHeatSwitchStatus();
             break;
         }
-        if (self_check_cnt <= 28) {
+        if (self_check_cnt <= 28)
+        {
             break;
         }
-        if (SteerWhllHeatSW == 0) {
+        if (SteerWhllHeatSW == 0)
+        {
             App_stWheelHeat.u32HeatTimer = WHEEL_HEAT_TIMER_30MIN;
             SWHMFailure = 0;
             break;
         }
-        if (App_stWheelHeat.u32HeatTimer == 0) {
+        if(SteerWhllHeatSW == 1)//加热请求开启
+        {
+
+        }
+        if (App_stWheelHeat.u32HeatTimer == 0)
+        {
             vHeatOutputOff();
             StatusOfTheSteeringWheelHeater = 0x1;
             (void)ClearRemoteHeatSwitchStatus();
             break;
         }
         vHeatOutputOn();
-        // if ((App_stWheelHeat.u16ShortValue > VALUE_THRESD_OVER_LOAD) || (App_stWheelHeat.u16ShortValue < ADC_WHL_HEAT_OPEN_THRESD)) {
-        //     if (App_stWheelHeat.u32HeatTimer == WHEEL_HEAT_TIMER_30MIN) {
-    
-        //         break;
-        //     }
-        // }
         App_stWheelHeat.u32HeatTimer--;
         StatusOfTheSteeringWheelHeater = 0x3;
-        if (system_voltage_mode_get() != SYSTEM_VOLTAGE_MODE_NORMAL) {
+        if (system_voltage_mode_get() != SYSTEM_VOLTAGE_MODE_NORMAL)
+        {
             heat_diag_state = (heat_diag_state & (uint8_t)(~0x10)) | 0x10;
-        } else {
+        }
+        else
+        {
             heat_diag_state &= (uint8_t)(~0x10);
         }
-        
+
         heat_diag_state = (heat_diag_state & (uint8_t)(~0xF)) | ((uint8_t)vHeatDiag() & 0xF);
-        
-        if (heat_diag_state != 0) {
+
+        if (heat_diag_state != 0)
+        {
             SWHMFailure = 1;
             (void)ClearRemoteHeatSwitchStatus();
             break;
         }
     } while (0);
     COM_SendSig1(&StatusOfTheSteeringWheelHeater);
-    
+
     /*---------------------------故障后执行发送10s故障信号-------------------------------*/
-    do {
-        if (SWHMFailure == 0) {
+    do
+    {
+        if (SWHMFailure == 0)
+        {
             SWHMFailure_tx_cnt = 0;
             break;
         }
-        
-        if (SWHMFailure_tx_cnt < 1000) {
+
+        if (SWHMFailure_tx_cnt < 1000)
+        {
             COM_SendSig2(&SWHMFailure);
             SWHMFailure_tx_cnt++;
             break;
         }
         SWHMFailure = 0;
     } while (0);
-    
 }
 
 /**
  * @brief Send heat status signal,period is 100ms
  *
  */
-static void vSendHeatStatusSignal(void) {
-    Com_SendSignal(COM_TX_SIG1, &u8HeatStatusSignal);
-}
+static void vSendHeatStatusSignal(void) { Com_SendSignal(COM_TX_SIG1, &u8HeatStatusSignal); }
 
-uint8_t u8HeatGetStatus(void) {
-    return App_stWheelHeat.u8HeatSwitchStauts;
-}
+uint8_t u8HeatGetStatus(void) { return App_stWheelHeat.u8HeatSwitchStauts; }
 
 /**
  * @brief Check the heating switch/signal status
  *
  */
-void App_HeatSignal_Task(void) {
+void App_HeatSignal_Task(void)
+{
     static uint8_t u8HeatSwitchFlag = 0;
     static uint8_t u8sendsigcntr = 0;
     AppIpduAds_560_TimeoutCheck();
     uint32_t u32heatbtn;
     u32heatbtn = vHeatGetInputIO();
-    
+
     /*
     if(CMDHEAT_ENABLE != App_stWheelHeat.u8HeatEnable)
     {
@@ -583,19 +678,25 @@ void App_HeatSignal_Task(void) {
         u32heatbtn = 0;
     }
     */
-    
+
     // 连续检测到3次为1则认为按键触发
-    if (u32heatbtn) {
+    if (u32heatbtn)
+    {
         App_stWheelHeat.u16HeatSwitchCnt++;
-        if (App_stWheelHeat.u16HeatSwitchCnt > 3) {
+        if (App_stWheelHeat.u16HeatSwitchCnt > 3)
+        {
             App_stWheelHeat.u16HeatSwitchCnt = 3;
-            
-            if (u8HeatSwitchFlag == 0) {
+
+            if (u8HeatSwitchFlag == 0)
+            {
                 // First time to trigger
-                if (App_stWheelHeat.u8HeatSwitchStauts == 0) {
+                if (App_stWheelHeat.u8HeatSwitchStauts == 0)
+                {
                     App_stWheelHeat.u8HeatSwitchStauts = 1;
                     u8HeatStatusSignal = 3;
-                } else {
+                }
+                else
+                {
                     App_stWheelHeat.u8HeatSwitchStauts = 0;
                     u8HeatStatusSignal = 1;
                     AppDemmHeatShortFailureEvent(DTC_TEST_EVENT_PASSED);
@@ -603,36 +704,47 @@ void App_HeatSignal_Task(void) {
             }
             u8HeatSwitchFlag = 1;
         }
-    } else {
+    }
+    else
+    {
         App_stWheelHeat.u16HeatSwitchCnt = 0;
         u8HeatSwitchFlag = 0;
     }
-    
+
     App_stWheelHeat.u8RemoteSwitchStauts = u8ReadRemoteHeatSwitchStatus();
-    if (CMDHEAT_ENABLE == App_stWheelHeat.u8HeatEnable) {
+    if (CMDHEAT_ENABLE == App_stWheelHeat.u8HeatEnable)
+    {
         /*Remote control switch from CAN*/
-        if (App_stWheelHeat.u8RemoteSwitchStauts == 1) {
+        if (App_stWheelHeat.u8RemoteSwitchStauts == 1)
+        {
             App_stWheelHeat.u8RemoteSwitchStauts = 0;
             App_stWheelHeat.u8HeatSwitchStauts = 1;
             u8HeatStatusSignal = 3;
         }
     }
-    
-    if (CMDHEAT_ENABLE != App_stWheelHeat.u8HeatEnable) {
+
+    if (CMDHEAT_ENABLE != App_stWheelHeat.u8HeatEnable)
+    {
         vLedSwitchOff();
         u8HeatStatusSignal = 1;
-    } else {
-        if (App_stWheelHeat.u8HeatSwitchStauts == 1u) {
+    }
+    else
+    {
+        if (App_stWheelHeat.u8HeatSwitchStauts == 1u)
+        {
             vLedSwitchOn();
             u8HeatStatusSignal = 3; // danny
-        } else {
+        }
+        else
+        {
             vLedSwitchOff();
             u8HeatStatusSignal = 1; // danny
         }
     }
-    
+
     u8sendsigcntr++;
-    if (u8sendsigcntr >= 10) {
+    if (u8sendsigcntr >= 10)
+    {
         u8sendsigcntr = 0;
         vSendHeatStatusSignal();
     }
