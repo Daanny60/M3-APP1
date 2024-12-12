@@ -1,36 +1,39 @@
 {
-	"folders": [
-		{
-			"path": ".."
-		}
-	],
-	"settings": {
-		"files.associations": {
-			"app_mfs.h": "c",
-			"types.h": "c",
-			"pdur_dcm.h": "c",
-			"stddef.h": "c",
-			"stdint.h": "c",
-			"yvals.h": "c",
-			"app_bootcfg.h": "c",
-			"core_cm0plus.h": "c",
-			"app_boot.h": "c",
-			"pll.h": "c",
-			"mf_config.h": "c",
-			"tim.h": "c",
-			"fm33lg0xx_fl.h": "c",
-			"fm33_assert.h": "c",
-			"fm33xx.h": "c",
-			"oseknm.h": "c",
-			"fm33lg0xx_fl_conf.h": "c",
-			"fm33lg0xx_fl_adc.h": "c",
-			"fm33lg0xx_fl_def.h": "c",
-			"fm33lg0xx.h": "c",
-			"adc_drv.h": "c",
-			"stdio.h": "c",
-			"dma.h": "c",
-			"system_voltage_manage.h": "c",
-			"keyboard_config.h": "c"
-		}
-	}
+    "workbench.settings.applyToAllProfiles": [
+        "editor.tabSize",
+        "C_Cpp.clang_format_style",
+        "C_Cpp.clang_format_path",
+        "C_Cpp.clang_format_fallbackStyle"
+    ],
+    "C_Cpp.vcFormat.indent.accessSpecifiers": true,
+    "editor.minimap.enabled": false,
+    "editor.detectIndentation": false,
+    "workbench.editor.enablePreview": false,
+    "workbench.editorAssociations": {
+        "*.out": "default"
+    },
+    "[c]": {
+        "editor.defaultFormatter": "chiehyu.vscode-astyle"
+    },
+    "C_Cpp.vcFormat.indent.preprocessor": "none",
+    "editor.fontWeight": "normal",
+    "C_Cpp.vcFormat.indent.braces": true,
+    "C_Cpp.vcFormat.indent.caseLabels": true,
+    "C_Cpp.vcFormat.indent.lambdaBracesWhenParameter": false,
+    "C_Cpp.vcFormat.indent.preserveComments": true,
+    "settingsSync.ignoredSettings": [
+        "-C_Cpp.clang_format_path"
+    ],
+    "C_Cpp.clang_format_style": "file:${workspaceFolder}/.vscode/format/.clang-format",
+    "C_Cpp.formatting": "clangFormat",
+    "C_Cpp.clang_format_path": "${workspaceFolder}\\.vscode\\format\\clang-format.exe",
+    "astyle.executable": "${workspaceFolder}\\.vscode\\format\\astyle-3.4.13-x64\\astyle.exe",
+    "astyle.astylerc": "${workspaceFolder}/.vscode/format/.astylerc",
+    "editor.accessibilitySupport": "on",
+    "workbench.layoutControl.enabled": false,
+    "git.useEditorAsCommitInput": false,
+    "git.autofetch": true,
+    "[cpp]": {
+        "editor.defaultFormatter": "chiehyu.vscode-astyle"
+    },
 }

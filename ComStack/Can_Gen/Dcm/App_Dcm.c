@@ -141,7 +141,6 @@ void   vAppHeatInit(void)
         {
           u8Flag_EnterProg=0;
           u8adjustheat=0;
-
         }
 ////////
 /*static void DynamicalDidCommon(Dcm_MsgContextType* pMsgContext,uint8 DidPosition);*/

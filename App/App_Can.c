@@ -170,17 +170,14 @@ void vAppCanTask(void)
 ////////////////////////////////////////////////////////////////////////////////////////
 void AppIpduSWS_36A_TOProcess(void)
 {
-  //memcpy(TxIpduSWS_4A8._c, TxIpduSWS_4A8DefualtValue._c, sizeof(TxIpduSWS_4A8));
+   memcpy(Ipdu_TxMessage1._c, Ipdu_TxMessage1_DefualtValue._c, sizeof(Ipdu_TxMessage1));
 }
 
 
 void AppIpduSWS_36A_ConfProcess(void)
 {
-
+    memcpy(Ipdu_TxMessage1._c, Ipdu_TxMessage1_DefualtValue._c, sizeof(Ipdu_TxMessage1));
 }
-
-
-
 
 
 void AppIpdu_23C_Ind_Process()
@@ -263,6 +260,10 @@ uint8_t u8ReadRemoteHeatSwitchStatus(void)
     uint8_t u8readrtn;
     u8readrtn = u8RemoteHeatSwitchStatus;
   return u8readrtn;
+}
+void ClearRemoteHeatSwitchStatus(void)
+{
+    u8RemoteHeatSwitchStatus = 0;
 }
 
 uint8_t u8ReadHeatEnableCondition(void)

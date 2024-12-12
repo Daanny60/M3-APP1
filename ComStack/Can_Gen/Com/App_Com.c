@@ -52,9 +52,7 @@ void Com_TxIpduCallout(PduIdType PduId)
   {
   }
 
-  void AppIpdu_Message1_TxTOIndication(void)
-  {
-  }
+
 
   //////////////////////////////////////////////////////////////////
 
@@ -74,7 +72,10 @@ void AppIpduSWS_429_TxTOIndication(void)
 }
 ///////////////////////////////////////////////
 
-
+void AppIpdu_Message1_TxTOIndication(void)
+{
+    AppIpduSWS_36A_TOProcess();
+}
 void AppTxIpdu_Message1_Conf(void)
 {
   AppIpduSWS_36A_ConfProcess();

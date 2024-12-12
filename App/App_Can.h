@@ -69,6 +69,7 @@ void AppIpduSWS_4A8_TOProcess(void);
 void AppIpduSWS_3B0_TOProcess(void);
 void AppIpduSWS_429_TOProcess(void);
 
+void AppIpduSWS_36A_TOProcess(void);
 void AppIpduSWS_36A_ConfProcess(void);
 
 
@@ -119,6 +120,7 @@ uint8_t u8ReadHeatCmd(void);
 
 void AppIpduAds_560_TimeoutCheck(void);
 uint8_t u8ReadRemoteHeatSwitchStatus(void);
+void  ClearRemoteHeatSwitchStatus(void);
 uint8_t u8ReadHeatEnableCondition(void);
 uint8_t App_PEPS_PwrMod_Get(void);
 uint16_t App_VehicleSpeed_Get(void);

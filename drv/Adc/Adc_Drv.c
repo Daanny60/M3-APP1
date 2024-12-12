@@ -49,16 +49,20 @@ void ADC_Init(void)
 
 void ADC_Start(void)
 {
-    FL_VREF_EnableVREFBuffer(VREF);                             /* 使能VREF BUFFER */ 
-    FL_ADC_EnableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH6);    /* 通道选择ADC_6 */
-    FL_ADC_EnableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH11);    /* 通道选择ADC_11 */
-    FL_ADC_EnableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH13);    /* 通道选择ADC_13 */
-
-    FL_ADC_EnableSequencerChannel(ADC, FL_ADC_INTERNAL_VREF1P2);/* 通道选择VREF */
-  
-    FL_ADC_ClearFlag_EndOfConversion(ADC);                      /* 清标志 */
-    FL_ADC_Enable(ADC);                                         /* 启动ADC */
-    FL_ADC_EnableSWConversion(ADC);                             /* 开始转换 */ 
+   FL_VREF_EnableVREFBuffer(VREF);                             /* 使能VREF BUFFER */ 
+   FL_ADC_EnableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH0);    /* 通道选择ADC_0 */
+   FL_ADC_EnableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH1);    /* 通道选择ADC_1 */
+   FL_ADC_EnableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH5);    /* 通道选择ADC_5 */
+   FL_ADC_EnableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH6);    /* 通道选择ADC_6 */
+   FL_ADC_EnableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH7);    /* 通道选择ADC_7 */
+   FL_ADC_EnableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH12);    /* 通道选择ADC_12 */
+   FL_ADC_EnableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH13);    /* 通道选择ADC_13 */
+   FL_ADC_EnableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH14);    /* 通道选择ADC_14 */ 
+   FL_ADC_EnableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH15);    /* 通道选择ADC_15 */ 
+   FL_ADC_EnableSequencerChannel(ADC, FL_ADC_INTERNAL_VREF1P2);/* 通道选择VREF */
+  FL_ADC_ClearFlag_EndOfConversion(ADC);                      /* 清标志 */
+  FL_ADC_Enable(ADC);                                         /* 启动ADC */
+  FL_ADC_EnableSWConversion(ADC);                             /* 开始转换 */ 
 }
 
 
@@ -77,12 +81,15 @@ void ADC_Task(void)
     FL_ADC_Disable(ADC);                                        
      
     FL_ADC_DisableSequencerChannel(ADC, FL_ADC_INTERNAL_VREF1P2);
-    FL_ADC_DisableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH13); 
-    FL_ADC_DisableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH11);
+    FL_ADC_DisableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH15);
+    FL_ADC_DisableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH14);  
+    FL_ADC_DisableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH13);
+    FL_ADC_DisableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH12);
+    FL_ADC_DisableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH7); 
     FL_ADC_DisableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH6);
- 
-    
-
+    FL_ADC_DisableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH5);
+    FL_ADC_DisableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH1);
+    FL_ADC_DisableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH0);
     memcpy(ADC_Drv.Result, ADC_Drv.Buf, sizeof(ADC_Drv.Buf));
 
     if(ADC_Drv.FilterCnt < ADC_DRV_FILTER_SIZE)
@@ -120,11 +127,17 @@ void ADC_Task(void)
 
 
     ADC_Drv.Timeout = 0;
-    FL_ADC_EnableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH6);    /* 通道选择ADC_6 */
-    FL_ADC_EnableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH11);    /* 通道选择ADC_11 */
-    FL_ADC_EnableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH13);    /* 通道选择ADC_13 */
 
-    FL_ADC_EnableSequencerChannel(ADC, FL_ADC_INTERNAL_VREF1P2);/* 通道选择VREF */ 
+   FL_ADC_EnableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH0);    /* 通道选择ADC_0 */
+   FL_ADC_EnableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH1);    /* 通道选择ADC_1 */
+   FL_ADC_EnableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH5);    /* 通道选择ADC_5 */
+   FL_ADC_EnableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH6);    /* 通道选择ADC_6 */
+   FL_ADC_EnableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH7);    /* 通道选择ADC_7 */
+   FL_ADC_EnableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH12);    /* 通道选择ADC_12 */
+   FL_ADC_EnableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH13);    /* 通道选择ADC_13 */
+   FL_ADC_EnableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH14);    /* 通道选择ADC_14 */ 
+   FL_ADC_EnableSequencerChannel(ADC, FL_ADC_EXTERNAL_CH15);    /* 通道选择ADC_15 */ 
+   FL_ADC_EnableSequencerChannel(ADC, FL_ADC_INTERNAL_VREF1P2);/* 通道选择VREF */ 
     FL_ADC_Enable(ADC); 
     FL_ADC_EnableSWConversion(ADC);                             /* 开始转换 */ 
   }
