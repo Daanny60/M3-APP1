@@ -145,24 +145,27 @@ static SystemVoltageManage_t gs_SystemVoltageManage =
 #endif
 };
 
+
 static SystemVoltageManageDtc_t gs_SystemVoltageManageDtc = 
 {
-  8500,//less than 8.5v
-  9000,//more than 9v
-  16500,//more than 16.5v
-  16000,//less than 16v
+  9272,//less than 8.5v VoltageLowThreshold;
+  9774,//more than 9v   VoltageLowRecoverThreshold
+  17349,//more than 16.5v VoltageHighThreshold
+  16836,//less than 16v   VoltageHighRecoverThreshold
 };
 
 
 
 FaultMatureDtc_t gs_FaultMature = 
 {
+    /*low*/
   {
-    0,
-    0,
-    30,
-    10,
+    0, //u16FaultMatureCnt
+    0, //u16FaultRecoverCnt
+    30, //u16FaultMatureCntMax
+    10, //u16FaultRecoverCntMax
   },
+  /*high*/
   {
     0,
     0,
