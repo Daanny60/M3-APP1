@@ -201,7 +201,7 @@ static uint8_t u8MonitorVoltDtcCondition(void)
   }
 
   //If both condition 1 and condition 2 are met, return 1
-  if(u8conditionIGN == 1 && u8conditionEngine == 1)
+  if(u8conditionEngine == 1)
   {
     u8conditionRtn = 1;
   }
