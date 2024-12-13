@@ -185,10 +185,9 @@ static uint8_t u8MonitorVoltDtcCondition(void)
 {
 
   uint8_t u8conditionRtn = 0;
-  uint8_t u8conditionIGN = 0;
   uint8_t u8conditionEngine = 0;
 
-  u8conditionIGN = u8GetMonitorDtcCondition();
+ 
   //u8conditionIGN = 1; //for test
   //Condition 2: EngineState!=0x02 CRANK
   if(eReadEngineState() != ENGINESTATE_CRANK)

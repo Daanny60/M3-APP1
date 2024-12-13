@@ -230,9 +230,11 @@ void  vGpioDeinit(void) {
 /*控制加热开关的两个函数*/
 void vHeatOutputOn(void) {
     FL_GPIO_SetOutputPin(HEATING_CTRL_GPIO, HEATING_CTRL_PIN);
+
 }
 void vHeatOutputOff(void) {
     FL_GPIO_ResetOutputPin(HEATING_CTRL_GPIO, HEATING_CTRL_PIN);
+
 }
 
 
