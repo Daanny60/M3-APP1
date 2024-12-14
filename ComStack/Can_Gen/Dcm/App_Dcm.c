@@ -79,10 +79,10 @@ __root const uint8_t u8SoftCodeNumber[9]@0x0001BC21 = { 0x00, 0x02, 0x00, 0x11, 
 
 // F195  SystemSupplierECUSoftwareVersionNumberDataIdentifier
 // F189  JAC ECU Software Version
-__root const uint8_t u8ECU_SoftwareVersionNumber[5] @0x0001B40C = {'V', '3', '.', '0', '0'};
+__root const uint8_t u8ECU_SoftwareVersionNumber[5] @0x0001B410 = {'V', '3', '.', '0', '0'};
 
 // F193 systemSupplierECUHardwareVersionNumberDataIdentifier
-__root const uint8_t u8ECU_HardwareVersionNumber[5] @0x0001B411 = {'V', '1', '.', '0', '0'};
+__root const uint8_t u8ECU_HardwareVersionNumber[5] @0x0001B420 = {'V', '1', '.', '0', '0'};
 
 // F187 vehicleManufacturerSparePartNumberDataIdentifier
 __root const uint8_t u8ECU_facturepartnumber[16] @0x0001B400 = "3402100V03XU    ";
@@ -104,8 +104,8 @@ uint8_t Supplier_ECU_Hardware_Version[5] = {'V', '1', '.', '0', '0'};
 uint8_t Supplier_ECU_Software_Version[5] = {'V', '1', '.', '0', '0'};
 
 app_read_data_add_s app_read_data_add = {
-    (uint8_t *)0x0001B40C,
-    (uint8_t *)0x0001B411,
+    (uint8_t *)0x0001B410,
+    (uint8_t *)0x0001B420,
     (uint8_t *)0x0001B400,
 };
 

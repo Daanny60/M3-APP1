@@ -87,8 +87,9 @@ void vAppCanBusOffIndication(void)
     u8BusOffFlag = 1;
 }
 
-{
+
 void vCheckBusOffDTC(void)
+{
     uint8_t u8BusOffDTCcondition;
     u8BusOffDTCcondition = u8GetMonitorDtcCondition();
     if(1 == u8BusOffDTCcondition)
