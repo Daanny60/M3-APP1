@@ -124,12 +124,12 @@ typedef uint16 IntEEPROM1_TAddress; /* Type of address to the EEPROM */
 #define  DTC_SYSTEMVOLTAGELOW_FAILURE_ID             0U
 #define  DTC_SYSTEMVOLTAGEHIGH_FAILURE_ID             1U
 #define  DTC_HARNESSFRACTUREORSHORT_FAILURE_ID             2U
-#define  DTC_CANDISCONNECTED_FAILURE_ID             3U
-#define  DTC_HEATOPEN_FAILURE_ID             4U
-#define  DTC_HEATSHORT_FAILURE_ID             5U
-#define  DTC_NTCSHORTOROPEN_FAILURE_ID             6U
-#define  DTC_TEMPOVER37_5_FAILURE_ID             7U
-#define  DTC_CANDISCONNECTED_EMS_FAILURE_ID             8U
+#define  DTC_CANDISCONNECTED_EMS_FAILURE_ID             3U
+#define  DTC_CANDISCONNECTED_FAILURE_ID             4U
+#define  DTC_HEATOPEN_FAILURE_ID             5U
+#define  DTC_HEATSHORT_FAILURE_ID             6U
+#define  DTC_NTCSHORTOROPEN_FAILURE_ID             7U
+#define  DTC_TEMPOVER37_5_FAILURE_ID             8U
 #define  DTC_PinISCurrent_FAILURE_ID 					9U
 
 

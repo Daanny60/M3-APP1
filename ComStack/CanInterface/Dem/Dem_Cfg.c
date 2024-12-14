@@ -7,12 +7,12 @@ const uint32_t SupportedDTC[TOTAL_DTC_NUM] = {
 {0x900216},// Voltage Low         电压低
 {0x900117},//Voltage Over         电压高
 {0xC07388},//bus off              连续6次检测到busoff 故障，且中间无成功通信
+{0xC10087}, //未收到EMS发送的0x117报文
 {0xC14087},// COM TimeOut         持续500ms时间内，未收到BCM发送的0x2CD报文
 {0xA5C013},//Heat R  open         加热丝开路
 {0xA5C011}, //Heat R  connect GND 加热丝对地短路
 {0xA5102A},//NTC open or short    NTC开路或者短路
 {0xA5C1F0},// HeatOver.           NTC检测温度>35+2.5℃
-{0xC10087}, //未收到EMS发送的0x117报文
 {0xA5P001}, //IS管脚检测到反馈电流<0
 };
 const dtc_drv_cfg_t dtc_cfg_tbl[TOTAL_DTC_NUM] = 

@@ -281,6 +281,7 @@ uint8_t vHeatDiag(void) {
             heat_diag_is_ntc &= 0xFC;
             AppDemmNtcShortOrOpenFailureEvent(DTC_TEST_EVENT_PASSED);
         }
+        /*此时不在自检或正常加热*/
         if ((((self_check_state & 0x30) >> 4) != 1) && (((self_check_state & 0xC0) >> 6) != 1)) {
             if (((uint8_t)(heat_diag_state >> 2) == 1)) {
                 AppDemmHeatShortFailureEvent(DTC_TEST_EVENT_FAILED);

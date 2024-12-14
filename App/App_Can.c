@@ -87,10 +87,10 @@ void vAppCanBusOffIndication(void)
     u8BusOffFlag = 1;
 }
 
-void vCheckBusOffDTC(void)
 {
+void vCheckBusOffDTC(void)
     uint8_t u8BusOffDTCcondition;
-    u8BusOffDTCcondition = u8GetMonitorDtcCondition();        
+    u8BusOffDTCcondition = u8GetMonitorDtcCondition();
     if(1 == u8BusOffDTCcondition)
     {
         if(spbusoff.u8statusslowrecovery)
@@ -136,36 +136,36 @@ void vAppCanTask(void)
   uint8_t u8systemstate;
   vBusoffCheck();
   vBusoffTimeFun();
-  u8systemstate = system_voltage_mode_get();
-  if(SYSTEM_VOLTAGE_MODE_HIGH == u8systemstate || SYSTEM_VOLTAGE_MODE_LOW == u8systemstate)
-  {
-    if(u8SystemVoltFaultFlag == 0)
-    {
-      //CanTrcv_Disable();
-      CanIf_SetControllerMode(0,CANIF_CS_STOPPED);
-      //CanNm_Stop(0);
-      Com_TxStop();
-      Com_RxStop();
-      u8SystemVoltFaultFlag = 1;    
+//   u8systemstate = system_voltage_mode_get();
+//   if(SYSTEM_VOLTAGE_MODE_HIGH == u8systemstate || SYSTEM_VOLTAGE_MODE_LOW == u8systemstate)
+//   {
+//     if(u8SystemVoltFaultFlag == 0)
+//     {
+//       //CanTrcv_Disable();
+//       CanIf_SetControllerMode(0,CANIF_CS_STOPPED);
+//       //CanNm_Stop(0);
+//       Com_TxStop();
+//       Com_RxStop();
+//       u8SystemVoltFaultFlag = 1;    
       
-    }
-  }
-  else
-  {
-    if(u8SystemVoltFaultFlag == 1)
-    {
-      Can_Init();
-      (void)CanIf_SetControllerMode(0,CANIF_CS_STARTED);
-      //CanTrcv_Enable();
-      Com_TxStart();
-      Com_RxStart();
-      u8SystemVoltFaultFlag = 0;
-      CanNm_Start(0);
-      //u8HCANBusOffCntr = 0;
-    }
-  }
+//     }
+//   }
+//   else
+//   {
+//     if(u8SystemVoltFaultFlag == 1)
+//     {
+//       Can_Init();
+//       (void)CanIf_SetControllerMode(0,CANIF_CS_STARTED);
+//       //CanTrcv_Enable();
+//       Com_TxStart();
+//       Com_RxStart();
+//       u8SystemVoltFaultFlag = 0;
+//       CanNm_Start(0);
+//       //u8HCANBusOffCntr = 0;
+//     }
+//   }
   vCheckBusOffDTC();
-  vCheckFrame2AB();
+//   vCheckFrame2AB();
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 void AppIpduSWS_36A_TOProcess(void)
@@ -375,7 +375,7 @@ void   vBusoffCheck(void)
             }
             else
             {
-                CanNm_BusOff(0);
+                // CanNm_BusOff(0);
                 //spbusoff.u16NMbusoffcnt = 0;
                 //spbusoff.u16nmcyclecnt = FASTREVCOVERYCYCLE;
                 //spbusoff.u8statusslowrecovery = 0;

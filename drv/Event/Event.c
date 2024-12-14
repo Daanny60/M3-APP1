@@ -4,61 +4,59 @@
 #include "keyboard_config.h"
 #include "App_Keyboard.h"
 
-volatile uint8_t DTCEventFlag=0;
-#if(DIA_KEYSTUCK2)
-typedef struct 
-{ 
+volatile uint8_t DTCEventFlag = 0;
+#if (DIA_KEYSTUCK2)
+typedef struct
+{
     /*0-4*/
-    DemmDtcEvent_e  RightPhoneSwitchStuckFailureEvent;
-    DemmDtcEvent_e  RightBackSwitchStuckFailureEvent;
-    DemmDtcEvent_e  RightSilenceSwitchStuckFailureEvent;
-    DemmDtcEvent_e  RightStarSwitchStuckFailureEvent;
-    DemmDtcEvent_e  LeftCrossCountrySwitchStuckFailureEvent;
-     /*5-9*/
-    DemmDtcEvent_e  LeftMediaSwitchStuckFailureEvent;
-    DemmDtcEvent_e  LeftSpeedAddSwitchStuckFailureEvent;
-    DemmDtcEvent_e  LeftDisanceAddSwitchStuckFailureEvent;
-    DemmDtcEvent_e  LeftDisanceDecSwitchStuckFailureEvent;
-    DemmDtcEvent_e  LeftSpeedDecSwitchStuckFailureEvent;
-     /*10-14*/
-    DemmDtcEvent_e  LeftInformationSwitchStuckFailureEvent;
-    DemmDtcEvent_e  LeftAccSwitchStuckFailureEvent;
-    DemmDtcEvent_e  RightVoiceSwitchStuckFailureEvent;
-    DemmDtcEvent_e  RightNextSwitchStuckFailureEvent;
-    DemmDtcEvent_e  RightMenuSwitchStuckFailureEvent;
+    DemmDtcEvent_e RightPhoneSwitchStuckFailureEvent;
+    DemmDtcEvent_e RightBackSwitchStuckFailureEvent;
+    DemmDtcEvent_e RightSilenceSwitchStuckFailureEvent;
+    DemmDtcEvent_e RightStarSwitchStuckFailureEvent;
+    DemmDtcEvent_e LeftCrossCountrySwitchStuckFailureEvent;
+    /*5-9*/
+    DemmDtcEvent_e LeftMediaSwitchStuckFailureEvent;
+    DemmDtcEvent_e LeftSpeedAddSwitchStuckFailureEvent;
+    DemmDtcEvent_e LeftDisanceAddSwitchStuckFailureEvent;
+    DemmDtcEvent_e LeftDisanceDecSwitchStuckFailureEvent;
+    DemmDtcEvent_e LeftSpeedDecSwitchStuckFailureEvent;
+    /*10-14*/
+    DemmDtcEvent_e LeftInformationSwitchStuckFailureEvent;
+    DemmDtcEvent_e LeftAccSwitchStuckFailureEvent;
+    DemmDtcEvent_e RightVoiceSwitchStuckFailureEvent;
+    DemmDtcEvent_e RightNextSwitchStuckFailureEvent;
+    DemmDtcEvent_e RightMenuSwitchStuckFailureEvent;
     /*15-16*/
-    DemmDtcEvent_e  LeftPickSwitchStuckFailureEvent;
-    DemmDtcEvent_e  RightPickSwitchStuckFailureEvent;
-#ifndef  SWSCONFIG_LOW
+    DemmDtcEvent_e LeftPickSwitchStuckFailureEvent;
+    DemmDtcEvent_e RightPickSwitchStuckFailureEvent;
+#ifndef SWSCONFIG_LOW
     /*15-18*/
-    DemmDtcEvent_e  HeatShortFailureEvent;
-    DemmDtcEvent_e  HeatOpenFailureEvent;
-    DemmDtcEvent_e  NtcShortFailureEvent;
-    DemmDtcEvent_e  NtcOpenFailureEvent;    
-#endif  
-}AppDemmEvent_TypeDef;  
+    DemmDtcEvent_e HeatShortFailureEvent;
+    DemmDtcEvent_e HeatOpenFailureEvent;
+    DemmDtcEvent_e NtcShortFailureEvent;
+    DemmDtcEvent_e NtcOpenFailureEvent;
+#endif
+} AppDemmEvent_TypeDef;
 #else
-typedef struct 
-{ 
-   DemmDtcEvent_e  SystemVoltageLowFailureEvent;
-   DemmDtcEvent_e  SystemVoltageHighFailureEvent;   
-   DemmDtcEvent_e  HarnessFractureOrShortFailureEvent;
-   DemmDtcEvent_e  BCM_Timeout_FailureEvent;//BCM节点丢失
-   DemmDtcEvent_e  HeatOpenFailureEvent;
-   DemmDtcEvent_e  HeatShortFailureEvent;
-   DemmDtcEvent_e  NtcShortOrOpenFailureEvent;
-   DemmDtcEvent_e  TemOver37_5FailureEvent;
-   DemmDtcEvent_e  EMS_Timeout_FailureEvent;//EMS节点丢失
-   DemmDtcEvent_e  PinISCurrentFailureEvent;//iS电流检测<0
-}AppDemmEvent_TypeDef;
- #endif
-    
-
+typedef struct
+{
+    DemmDtcEvent_e SystemVoltageLowFailureEvent;
+    DemmDtcEvent_e SystemVoltageHighFailureEvent;
+    DemmDtcEvent_e HarnessFractureOrShortFailureEvent;
+    DemmDtcEvent_e EMS_Timeout_FailureEvent; // EMS节点丢失
+    DemmDtcEvent_e BCM_Timeout_FailureEvent; // BCM节点丢失
+    DemmDtcEvent_e HeatOpenFailureEvent;
+    DemmDtcEvent_e HeatShortFailureEvent;
+    DemmDtcEvent_e NtcShortOrOpenFailureEvent;
+    DemmDtcEvent_e TemOver37_5FailureEvent;
+    DemmDtcEvent_e PinISCurrentFailureEvent; // iS电流检测<0
+} AppDemmEvent_TypeDef;
+#endif
 
 typedef struct
-{    
+{
     AppDemmEvent_TypeDef AppDemmEvent;
-}EventTypeDef;
+} EventTypeDef;
 
 EventTypeDef Event;
 
@@ -67,7 +65,7 @@ void EventInit(void)
     memset(&Event, 0, sizeof(Event));
 }
 
-#if(DIA_KEYSTUCK2==1)
+#if (DIA_KEYSTUCK2 == 1)
 /*0-4*/
 void AppDemmRightPhoneSwitchStuckFailureEventSet(DemmDtcEvent_e event)
 {
@@ -141,7 +139,7 @@ void AppDemmRightPickSwitchStuckFailureEventSet(DemmDtcEvent_e event)
     Event.AppDemmEvent.RightPickSwitchStuckFailureEvent = event;
 }
 
-#ifndef  SWSCONFIG_LOW
+#ifndef SWSCONFIG_LOW
 /*15-18*/
 void AppDemmHeatShortFailureEventSet(DemmDtcEvent_e event)
 {
@@ -353,15 +351,13 @@ void AppDemmTemOver37_5FailureEvent(DemmDtcEvent_e event)
 }
 void AppDemm_EMS_Timeout_Failure_Event_Set(DemmDtcEvent_e event)
 {
-     Event.AppDemmEvent.EMS_Timeout_FailureEvent= event;
+    Event.AppDemmEvent.EMS_Timeout_FailureEvent = event;
 }
 /*IS脚电流异常*/
 void AppDemmPinISCurrentFailureEvent(DemmDtcEvent_e event)
 {
-     Event.AppDemmEvent.PinISCurrentFailureEvent = event;
+    Event.AppDemmEvent.PinISCurrentFailureEvent = event;
 }
-
-
 
 DemmDtcEvent_e AppDemmSystemVoltageLowFailureEventGet(void)
 {
@@ -416,40 +412,38 @@ DemmDtcEvent_e AppDemmNtcShortOrOpenFailureEventGet(void)
 DemmDtcEvent_e AppDemmTemOver37_5FailureEventGet(void)
 {
     DemmDtcEvent_e event;
-    event = Event.AppDemmEvent.TemOver37_5FailureEvent ;
-    Event.AppDemmEvent.TemOver37_5FailureEvent  = DTC_TEST_EVENT_NULL;
+    event = Event.AppDemmEvent.TemOver37_5FailureEvent;
+    Event.AppDemmEvent.TemOver37_5FailureEvent = DTC_TEST_EVENT_NULL;
     return (event);
 }
 DemmDtcEvent_e AppDemm_EMS_Timeout_Failure_Event_Get(void)
 {
     DemmDtcEvent_e event;
-    event = Event.AppDemmEvent.EMS_Timeout_FailureEvent ;
-    Event.AppDemmEvent.EMS_Timeout_FailureEvent  = DTC_TEST_EVENT_NULL;
+    event = Event.AppDemmEvent.EMS_Timeout_FailureEvent;
+    Event.AppDemmEvent.EMS_Timeout_FailureEvent = DTC_TEST_EVENT_NULL;
     return (event);
 }
 DemmDtcEvent_e AppDemmTemPinISCurrentFailureEventGet(void)
 {
     DemmDtcEvent_e event;
     event = Event.AppDemmEvent.PinISCurrentFailureEvent;
-    Event.AppDemmEvent.PinISCurrentFailureEvent  = DTC_TEST_EVENT_NULL;
+    Event.AppDemmEvent.PinISCurrentFailureEvent = DTC_TEST_EVENT_NULL;
     return (event);
-
 }
-
 
 void dtconflag(void)
 {
-     DTCEventFlag=1;     
+    DTCEventFlag = 1;
 }
 
 void dtcoffflag(void)
 {
-     DTCEventFlag=0;     
+    DTCEventFlag = 0;
 }
 
 uint8_t getdtcstatus(void)
 {
-    return DTCEventFlag;    
+    return DTCEventFlag;
 }
 
 #endif

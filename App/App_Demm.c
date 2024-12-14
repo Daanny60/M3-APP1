@@ -611,15 +611,15 @@ const AppDemmProcessFunType AppDemmProcessFun[TOTAL_DTC_NUM] =
    AppDemmNtcOpenFailureProcess,
 #endif
 #else
-   AppDemmSystemVoltageLowFailureProcess,
-   AppDemmSystemVoltageHighFailureProcess,
-   AppDemmHarnessFractureOrShortFailureProcess,
-   AppDemm_BCM_Timeout_FailureProcess,
+   AppDemmSystemVoltageLowFailureProcess, /*欠压*/
+   AppDemmSystemVoltageHighFailureProcess, /*过压*/
+   AppDemmHarnessFractureOrShortFailureProcess, /*busoff*/
+   AppDemm_EMS_Timeout_FailureProcess,
+   AppDemm_BCM_Timeout_FailureProcess, 
    AppDemmHeatOpenFailureProcess,
    AppDemmHeatShortFailureProcess,
    AppDemmNtcShortOrOpenFailureProcess,
    AppDemmTemOver37_5FailureProcess,
-   AppDemm_EMS_Timeout_FailureProcess,
    AppDemmTemPinISCurrentFailureProcess,
 
 #endif
@@ -639,8 +639,8 @@ static void vMonitorDtcConditionTask(void)
     adc_result_mv_type mvsystemvoltage;
     uint8_t u8conditionIGN = 0;
     uint8_t u8conditionVolt = 0; 
-    ekeystate = eReadKeyState();
-    if(ekeystate == KEYSTATE_IGN)
+    ekeystate = eReadEngineState();
+    if(ekeystate == ENGINESTATE_RUNNING)
     {
         u8conditionIGN = 1;
     }
@@ -760,5 +760,5 @@ void App_Demm_Task(void)
         AppDemmProcessFun[i]();
     }
     //vSelfHealingProcess();
-    //vMonitorDtcConditionTask();
+    vMonitorDtcConditionTask();
 }
