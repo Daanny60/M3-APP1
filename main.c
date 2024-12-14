@@ -156,7 +156,7 @@ int main(void) {
         
         if ((SystemTimeType)(now_time - timer_10ms_b) >= 10) {
             (void)system_voltage_manage_task();
-            (void)LowPowerManageTask();
+            // (void)LowPowerManageTask(); KL15 无低功耗
             (void)vAppCanTask();
             (void)App_Demm_Task();
             (void)dem_task();

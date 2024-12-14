@@ -209,8 +209,8 @@
 #define DCM_SERVICE_11_UserDefined1                                     STD_OFF
 #define DCM_SERVICE_11_UserDefined2                                     STD_OFF
 #define DCM_SERVICE_11_KeyOffOnReset                                     STD_OFF
-#define DCM_SERVICE_11_SoftReset                                     STD_OFF
-#define NUM_OF_11_SUB_FUNCTION                                       1u 
+#define DCM_SERVICE_11_SoftReset                                     STD_ON
+#define NUM_OF_11_SUB_FUNCTION                                       2u 
 #else
 #define NUM_OF_11_SUB_FUNCTION                                       0u
 #endif
@@ -222,9 +222,9 @@
 #define reportSupportedDTC                                STD_ON 
 #define reportDTCBySeverityMaskRecord                                     STD_OFF
 #define reportSeverityInformationOfDTC                                     STD_OFF
-#define reportDTCSnapshotRecordByDTCNumber                                     STD_ON
+#define reportDTCSnapshotRecordByDTCNumber                                     STD_OFF
 #define reportDTCSnapshotRecordByRecordNumber                                     STD_OFF
-#define reportDTCExtendedDataRecordByDTCNumber                                     STD_ON
+#define reportDTCExtendedDataRecordByDTCNumber                                     STD_OFF
 #define reportNumberOfDTCBySeverityMaskRecord                                     STD_OFF
 #define reportEmissionsRelatedOBDDTCByStatusMask                                     STD_OFF
 #define reportNumberOfMirrorMemoryDTCByStatusMask                                     STD_OFF
@@ -236,7 +236,7 @@
 #define reportMirrorMemoryDTCByStatusMask                                     STD_OFF
 #define reportFirstConfirmedDTC                                     STD_OFF
 #define reportFirstTestFailedDTC                                     STD_OFF
-#define NUM_OF_19_SUB_FUNCTION                                       5u
+#define NUM_OF_19_SUB_FUNCTION                                       3u
 #else
 #define NUM_OF_19_SUB_FUNCTION                                       0u
 #endif
@@ -248,7 +248,7 @@
   #define MAX_NUM_OF_DID_TO_READ                                       1u
 #endif
 #if(DCM_SERVICE_22_ENABLED==STD_ON)
-#define NUMBER_OF_READ_DID                                           20u//17u
+#define NUMBER_OF_READ_DID                                           22u//17u
 #endif
 #define DCM_SERVICE_23_ENABLED                                       STD_OFF
 #define DCM_SERVICE_24_ENABLED                                       STD_OFF
@@ -683,6 +683,8 @@ extern FUNC(void,DCM_CODE) App_Read0xF197(P2VAR(Dcm_MsgContextType,AUTOMATIC,DCM
 extern FUNC(void,DCM_CODE) App_Read0xF199(P2VAR(Dcm_MsgContextType,AUTOMATIC,DCM_APPL_DATA) pMsgContext);
 extern FUNC(void,DCM_CODE) App_Read0xF19D(P2VAR(Dcm_MsgContextType,AUTOMATIC,DCM_APPL_DATA) pMsgContext);
 extern FUNC(void,DCM_CODE) App_Read0xF1A8(P2VAR(Dcm_MsgContextType,AUTOMATIC,DCM_APPL_DATA) pMsgContext); 
+extern FUNC(void,DCM_CODE) App_Read0xF300(P2VAR(Dcm_MsgContextType,AUTOMATIC,DCM_APPL_DATA) pMsgContext);
+extern FUNC(void,DCM_CODE) App_Read0xF301(P2VAR(Dcm_MsgContextType,AUTOMATIC,DCM_APPL_DATA) pMsgContext);
 extern FUNC(void,DCM_CODE) App_Read0x040E(P2VAR(Dcm_MsgContextType,AUTOMATIC,DCM_APPL_DATA) pMsgContext); 
 extern FUNC(void,DCM_CODE) App_Read0x040F(P2VAR(Dcm_MsgContextType,AUTOMATIC,DCM_APPL_DATA) pMsgContext); 
 extern FUNC(void,DCM_CODE) App_Read0x0410(P2VAR(Dcm_MsgContextType,AUTOMATIC,DCM_APPL_DATA) pMsgContext); 
