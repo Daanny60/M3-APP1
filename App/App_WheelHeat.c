@@ -30,8 +30,11 @@ PIDController pid;
 
 App_WheelHeatType App_stWheelHeat;
 
-/* bit0~1定义为发动机当前状态，bit2~3定义为发动机状态出现RUNNING的次数，当连续三次出现RUNNING的情认为发动机状态是有效的，
-bit4~5定义为上电加热自检启动   bit6~7定义为正常加热启动  （正常情况下=0x1D）*/
+/* bit0~1定义为发动机当前状态，
+bit2~3定义为发动机状态出现RUNNING的次数，当连续三次出现RUNNING的情认为发动机状态是有效的，
+bit4~5定义为上电加热自检启动，未开始自检或自检结束，该位清0，加热自检时该位置1
+bit6~7定义为正常加热启动
+（正常情况下=0x1D）*/
 uint8_t self_check_state;
 /*加热自检计数 280ms*/
 uint8_t self_check_cnt;
@@ -249,12 +252,12 @@ uint8_t vHeatDiag(void) {
         /*NTC开路*/
         if (App_stWheelHeat.u16NtcValue > ADC_WHL_HEAT_NTC_OPEN_THRESD) {
             App_stWheelHeat.u16NtcOpenCnt++;
-            if (App_stWheelHeat.u16NtcOpenCnt > WHEEL_HEAT_TIMER_2S) {
+            if (App_stWheelHeat.u16NtcOpenCnt > WHEEL_HEAT_TIMER_200MS) {
                 heat_diag_is_ntc |= 1;
             }
-            if (App_stWheelHeat.u16NtcOpenCnt > WHEEL_HEAT_TIMER_2S) {
+            if (App_stWheelHeat.u16NtcOpenCnt > WHEEL_HEAT_TIMER_200MS) {
                 AppDemmNtcShortOrOpenFailureEvent(DTC_TEST_EVENT_FAILED);
-                App_stWheelHeat.u16NtcOpenCnt = WHEEL_HEAT_TIMER_2S;
+                App_stWheelHeat.u16NtcOpenCnt = WHEEL_HEAT_TIMER_200MS;
             }
         } else {
             if (App_stWheelHeat.u16NtcOpenCnt > 0) {
@@ -264,12 +267,12 @@ uint8_t vHeatDiag(void) {
         /*NTC短路*/
         if (App_stWheelHeat.u16NtcValue < ADC_WHL_HEAT_NTC_SHORT_THRESD) {
             App_stWheelHeat.u16NtcShortCnt++;
-            if (App_stWheelHeat.u16NtcShortCnt > WHEEL_HEAT_TIMER_2S) {
+            if (App_stWheelHeat.u16NtcShortCnt > WHEEL_HEAT_TIMER_200MS) {
                 heat_diag_is_ntc |= 2;
             }
-            if (App_stWheelHeat.u16NtcShortCnt > WHEEL_HEAT_TIMER_2S) {
+            if (App_stWheelHeat.u16NtcShortCnt > WHEEL_HEAT_TIMER_200MS) {
                 AppDemmNtcShortOrOpenFailureEvent(DTC_TEST_EVENT_FAILED);
-                App_stWheelHeat.u16NtcShortCnt = WHEEL_HEAT_TIMER_2S;
+                App_stWheelHeat.u16NtcShortCnt = WHEEL_HEAT_TIMER_200MS;
             }
         } else {
             if (App_stWheelHeat.u16NtcShortCnt > 0) {
@@ -300,12 +303,12 @@ uint8_t vHeatDiag(void) {
         /*IS短路*/
         if (App_stWheelHeat.u16ShortValue > ADC_WHL_HEAT_SHORT_THRESD) {
             App_stWheelHeat.u16HeatShortCnt++;
-            if (App_stWheelHeat.u16HeatShortCnt > WHEEL_HEAT_TIMER_2S) {
+            if (App_stWheelHeat.u16HeatShortCnt > WHEEL_HEAT_TIMER_200MS) {
                 heat_diag_is_ntc |= 4;
             }
-            if (App_stWheelHeat.u16HeatShortCnt > WHEEL_HEAT_TIMER_2S) {
+            if (App_stWheelHeat.u16HeatShortCnt > WHEEL_HEAT_TIMER_200MS) {
                 AppDemmHeatShortFailureEvent(DTC_TEST_EVENT_FAILED);
-                App_stWheelHeat.u16HeatShortCnt = WHEEL_HEAT_TIMER_2S;
+                App_stWheelHeat.u16HeatShortCnt = WHEEL_HEAT_TIMER_200MS;
             }
         } else {
             if (App_stWheelHeat.u16HeatShortCnt > 0) {
@@ -319,12 +322,12 @@ uint8_t vHeatDiag(void) {
         /*IS开路*/
         if (App_stWheelHeat.u16ShortValue < ADC_WHL_HEAT_OPEN_THRESD) {
             App_stWheelHeat.u16HeatOpenCnt++;
-            if (App_stWheelHeat.u16HeatOpenCnt > WHEEL_HEAT_TIMER_2S) {
+            if (App_stWheelHeat.u16HeatOpenCnt > WHEEL_HEAT_TIMER_200MS) { //故障检测时间要小于自检280ms
                 heat_diag_is_ntc |= 8;
             }
-            if (App_stWheelHeat.u16HeatOpenCnt > WHEEL_HEAT_TIMER_2S) {
+            if (App_stWheelHeat.u16HeatOpenCnt > WHEEL_HEAT_TIMER_200MS) {
                 AppDemmHeatOpenFailureEvent(DTC_TEST_EVENT_FAILED);
-                App_stWheelHeat.u16HeatOpenCnt = WHEEL_HEAT_TIMER_2S;
+                App_stWheelHeat.u16HeatOpenCnt = WHEEL_HEAT_TIMER_200MS;
             }
         } else {
             if (App_stWheelHeat.u16HeatOpenCnt > 0) {
@@ -470,7 +473,7 @@ void App_WheelHeat_Task(void) {
             //检测加热自检是否为1
             break;
         }
-        if (self_check_cnt > 28) {
+        if (self_check_cnt > 28) { //加热自检结束
             // 自检结束
             vHeatOutputOff();
             heat_diag_state = 0;
@@ -489,13 +492,14 @@ void App_WheelHeat_Task(void) {
         //检测bit0~3（加热NTC及IS脚是否正常），不正常相应的bit置1
         heat_diag_state = (heat_diag_state & (uint8_t)(~0xF)) | ((uint8_t)heat_diag_is_ntc & 0xF);
         
-        if (heat_diag_state != 0) {
+        if ((heat_diag_state != 0) || (App_stWheelHeat.u16ShortValue > VALUE_THRESD_OVER_LOAD))  {
             vHeatOutputOff();
             StatusOfTheSteeringWheelHeater = 0x1;
             SWHMFailure = 1;
             self_check_state &= (uint8_t)(~0x10);
+            self_check_cnt = 29; //加热自检结束
             // (void)ClearRemoteHeatSwitchStatus();  //进入自检没有按键信号不需要清除
-            //break;  //估计不能退出，不然28ms到不了
+            break;
         }
         self_check_cnt++;
         
@@ -548,7 +552,7 @@ void App_WheelHeat_Task(void) {
             StatusOfTheSteeringWheelHeater = 0x3;
             heat_diag_state = (heat_diag_state & (uint8_t)(~0xF)) | ((uint8_t)heat_diag_is_ntc & 0xF);
         }
-        if (heat_diag_state != 0) {
+        if ((heat_diag_state != 0) || (App_stWheelHeat.u16ShortValue > VALUE_THRESD_OVER_LOAD)) {
             SWHMFailure = 1;
             (void)ClearRemoteHeatSwitchStatus();
             break;
