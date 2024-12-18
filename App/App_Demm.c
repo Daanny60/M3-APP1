@@ -700,7 +700,7 @@ void App_Demm_Task(void)
 {
     uint8_t i;
 
-    if (rx_timeout_flag & COM_RXIPDU_Message2_TIMEOUTFLAG == 0x2)
+    if ((rx_timeout_flag & COM_RXIPDU_Message2_TIMEOUTFLAG) == 0x2)
     {
         EMS_dtc_fail_flag = 1;
         EMS_dtc_fail_clear_cnt = 0;
@@ -727,10 +727,10 @@ void App_Demm_Task(void)
             EMS_dtc_fail_clear_cnt = 0;
         }
     }
-    if (rx_timeout_flag & COM_RXIPDU_Message1_TIMEOUTFLAG == 0x1)
+    if ((rx_timeout_flag & COM_RXIPDU_Message1_TIMEOUTFLAG) == 0x1)
     {
         BCM_dtc_fail_flag = 1;
-        EMS_dtc_fail_clear_cnt = 0;
+        BCM_dtc_fail_clear_cnt = 0;
         AppDemm_BCM_Timeout_Failure_Event_Set(DTC_TEST_EVENT_FAILED);
     }
     else

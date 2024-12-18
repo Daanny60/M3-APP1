@@ -1316,7 +1316,7 @@ App_Read0xF301(P2VAR(Dcm_MsgContextType, AUTOMATIC, DCM_APPL_DATA) pMsgContext) 
     memory_copys(
         &DATA_0xF301[0], Supplier_ECU_Software_Version, gDcmDsdSubService_22[ReadHandle_0xF301].DcmDspDataSize);
     for (i = 0; i < gDcmDsdSubService_22[ReadHandle_0xF301].DcmDspDataSize; i++) {
-        pMsgContext->resData[2 + i] = DATA_0xF300[i];
+        pMsgContext->resData[2 + i] = DATA_0xF301[i];
     }
     #if (DCM_SERVICE_22_COMBINED_DID == STD_ON)
     DsdInternal_DidProcessingDone();

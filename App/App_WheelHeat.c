@@ -301,7 +301,7 @@ uint8_t vHeatDiag(void) {
             break;
         }
         /*IS短路*/
-        if (App_stWheelHeat.u16ShortValue > ADC_WHL_HEAT_SHORT_THRESD) {
+        if (App_stWheelHeat.u16ShortValue > VALUE_THRESD_OVER_LOAD) {
             App_stWheelHeat.u16HeatShortCnt++;
             if (App_stWheelHeat.u16HeatShortCnt > WHEEL_HEAT_TIMER_200MS) {
                 heat_diag_is_ntc |= 4;
@@ -492,7 +492,7 @@ void App_WheelHeat_Task(void) {
         //检测bit0~3（加热NTC及IS脚是否正常），不正常相应的bit置1
         heat_diag_state = (heat_diag_state & (uint8_t)(~0xF)) | ((uint8_t)heat_diag_is_ntc & 0xF);
         
-        if ((heat_diag_state != 0) || (App_stWheelHeat.u16ShortValue > VALUE_THRESD_OVER_LOAD))  {
+        if (heat_diag_state != 0)  {
             vHeatOutputOff();
             StatusOfTheSteeringWheelHeater = 0x1;
             SWHMFailure = 1;
@@ -545,18 +545,17 @@ void App_WheelHeat_Task(void) {
         } else {
             heat_diag_state &= (uint8_t)(~0x10);
         }
-        if ((App_stWheelHeat.u16NtcValue > ADC_WHL_HAET_ALL_ON_ADC) && (App_stWheelHeat.u16ISValue < VALUE_THRESD_OVER_LOAD)) {
-            vHeatOutputOn();
-            self_check_state = (self_check_state & (uint8_t)(~0xC0) | 0x40);
-            App_stWheelHeat.u32HeatTimer--;
-            StatusOfTheSteeringWheelHeater = 0x3;
-            heat_diag_state = (heat_diag_state & (uint8_t)(~0xF)) | ((uint8_t)heat_diag_is_ntc & 0xF);
-        }
-        if ((heat_diag_state != 0) || (App_stWheelHeat.u16ShortValue > VALUE_THRESD_OVER_LOAD)) {
+        
+        heat_diag_state = (heat_diag_state & (uint8_t)(~0xF)) | ((uint8_t)heat_diag_is_ntc & 0xF);
+        if (heat_diag_state != 0) {
             SWHMFailure = 1;
             (void)ClearRemoteHeatSwitchStatus();
             break;
         }
+        vHeatOutputOn();
+        self_check_state = (self_check_state & (uint8_t)(~0xC0) | 0x40);
+        App_stWheelHeat.u32HeatTimer--;
+        StatusOfTheSteeringWheelHeater = 0x3;
     } while (0);
     COM_SendSig1(&StatusOfTheSteeringWheelHeater);
     
