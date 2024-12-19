@@ -1,3 +1,11 @@
+/*
+ * @Author: adidi793 3331521600@qq.com
+ * @Date: 2024-12-16 09:49:15
+ * @LastEditors: adidi793 3331521600@qq.com
+ * @LastEditTime: 2024-12-18 17:03:03
+ * @FilePath: \M3 APP1\ComStack\CanInterface\Dem\Dem_Cfg.c
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 #include "DEM_Cfg.h"
 #include "DCM_CFG.h"
 #include "Dem_Types.h"
@@ -13,7 +21,7 @@ const uint32_t SupportedDTC[TOTAL_DTC_NUM] = {
 {0xA5C011}, //Heat R  connect GND 加热丝对地短路
 {0xA5102A},//NTC open or short    NTC开路或者短路
 {0xA5C1F0},// HeatOver.           NTC检测温度>35+2.5℃
-{0xA5P001}, //IS管脚检测到反馈电流<0
+{0xA5C001}, //IS管脚检测到反馈电流<0
 };
 const dtc_drv_cfg_t dtc_cfg_tbl[TOTAL_DTC_NUM] = 
 {

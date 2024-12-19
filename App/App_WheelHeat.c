@@ -298,8 +298,28 @@ uint8_t vHeatDiag(void) {
             }
             App_stWheelHeat.u16HeatShortCnt = 0;
             App_stWheelHeat.u16HeatOpenCnt = 0;
+            
+            /* 加热没开时，heat正极对电源短路 */
+            if (App_stWheelHeat.u16ShortValue > VALUE_THRESD_OVER_LOAD) {
+                App_stWheelHeat.u16HeatShortVoltCnt++;
+                if (App_stWheelHeat.u16HeatShortVoltCnt > WHEEL_HEAT_TIMER_200MS) {
+                }
+                if (App_stWheelHeat.u16HeatShortVoltCnt > WHEEL_HEAT_TIMER_200MS) {
+                    AppDemmPinISCurrentFailureEvent(DTC_TEST_EVENT_FAILED);
+                    App_stWheelHeat.u16HeatShortVoltCnt = WHEEL_HEAT_TIMER_200MS;
+                }
+            } else {
+                if (App_stWheelHeat.u16HeatShortVoltCnt > 0) {
+                    App_stWheelHeat.u16HeatShortVoltCnt--;
+                }
+                if (App_stWheelHeat.u16HeatShortVoltCnt == 0) {
+                    AppDemmPinISCurrentFailureEvent(DTC_TEST_EVENT_PASSED);
+                }
+            }
+            
             break;
         }
+        App_stWheelHeat.u16HeatShortVoltCnt = 0;
         /*IS短路*/
         if (App_stWheelHeat.u16ShortValue > VALUE_THRESD_OVER_LOAD) {
             App_stWheelHeat.u16HeatShortCnt++;

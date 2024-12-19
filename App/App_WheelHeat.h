@@ -89,6 +89,7 @@ typedef struct
     uint16_t  u16NtcShortCnt;       ///////////
     uint16_t  u16NtcOpenCnt;         //////////
     uint16_t  u16HeatShortCnt;       //////////
+    uint16_t  u16HeatShortVoltCnt;  //加热对电源短路
     uint16_t  u16HeatOpenCnt;        ////////
     uint16_t  u16ISBuf[16];            //////
     uint16_t  u16NtcBuf[16];
